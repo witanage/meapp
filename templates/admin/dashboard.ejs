@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body>
+  <div class="admin-shell">
+    <%- include('partials/sidebar') %>
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1><%= pageTitle %></h1>
+      </div>
+      <div class="dashboard-grid">
+        <% Object.keys(counts).forEach(function (key) { %>
+          <a class="dashboard-card" href="/admin/<%= key %>" style="text-decoration:none;color:inherit;">
+            <div class="count"><%= counts[key].count %></div>
+            <div><%= counts[key].title %></div>
+          </a>
+        <% }); %>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

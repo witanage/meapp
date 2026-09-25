@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head') %>
+<body>
+  <div class="admin-shell">
+    <%- include('partials/sidebar') %>
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1><%= pageTitle %></h1>
+        <a class="btn" href="/admin/<%= section %>/new">+ Add <%= singular %></a>
+      </div>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <% listColumns.forEach(function (col) { %><th><%= col.replace('_', ' ') %></th><% }); %>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (!rows.length) { %>
+            <tr><td colspan="<%= listColumns.length + 1 %>">No records yet.</td></tr>
+          <% } %>
+          <% rows.forEach(function (row) { %>
+            <tr>
+              <% listColumns.forEach(function (col) { %>
+                <td><%= row[col] !== null && row[col] !== undefined ? row[col] : '' %></td>
+              <% }); %>
+              <td class="actions-cell">
+                <a class="btn secondary" href="/admin/<%= section %>/<%= row.id %>/edit">Edit</a>
+                <form method="POST" action="/admin/<%= section %>/<%= row.id %>/delete" onsubmit="return confirm('Delete this record?');">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head') %>
+<body>
+  <div class="admin-shell">
+    <%- include('partials/sidebar') %>
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1><%= pageTitle %></h1>
+        <a class="btn secondary" href="/admin/<%= section %>">&larr; Back to list</a>
+      </div>
+
+      <% if (errors && errors.length) { %>
+        <div class="alert">
+          <ul>
+            <% errors.forEach(function (e) { %><li><%= e %></li><% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <form class="admin-form" method="POST" action="<%= isEdit ? '/admin/' + section + '/' + item.id : '/admin/' + section %>">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <% fields.forEach(function (f) { %>
+          <label for="<%= f.name %>"><%= f.label %><% if (f.required) { %> *<% } %></label>
+          <% if (f.type === 'textarea') { %>
+            <textarea id="<%= f.name %>" name="<%= f.name %>"><%= item[f.name] || '' %></textarea>
+          <% } else if (f.type === 'date') { %>
+            <% var dateVal = item[f.name] ? new Date(item[f.name]).toISOString().slice(0, 10) : ''; %>
+            <input type="date" id="<%= f.name %>" name="<%= f.name %>" value="<%= dateVal %>" />
+          <% } else if (f.type === 'number') { %>
+            <input type="number" id="<%= f.name %>" name="<%= f.name %>" value="<%= item[f.name] !== undefined && item[f.name] !== null ? item[f.name] : 0 %>" />
+          <% } else { %>
+            <input type="text" id="<%= f.name %>" name="<%= f.name %>" value="<%= item[f.name] || '' %>" <%= f.required ? 'required' : '' %> />
+          <% } %>
+        <% }); %>
+
+        <div style="margin-top:24px;">
+          <button type="submit" class="btn"><%= isEdit ? 'Save Changes' : 'Create' %></button>
+        </div>
+      </form>
+    </main>
+  </div>
+</body>
+</html>

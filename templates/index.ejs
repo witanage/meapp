@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body>
+  <%- include('partials/nav') %>
+
+  <header class="hero" id="about">
+    <div class="container">
+      <div class="eyebrow">Portfolio &amp; CV</div>
+      <h1><%= profile.name %></h1>
+      <div class="title"><%= profile.title %></div>
+      <p class="objective"><%= profile.objective %></p>
+      <div class="contact-row">
+        <% if (profile.phone) { %><span>&#9742; <%= profile.phone %></span><% } %>
+        <% if (profile.email) { %><span>&#9993; <%= profile.email %></span><% } %>
+        <% if (profile.location) { %><span>&#8962; <%= profile.location %></span><% } %>
+        <% if (profile.linkedin) { %><span>&#128279; <%= profile.linkedin %></span><% } %>
+      </div>
+    </div>
+  </header>
+
+  <section class="block" id="experience">
+    <div class="container">
+      <h2>Career</h2>
+      <p class="section-sub">Professional experience over the years.</p>
+      <div class="timeline">
+        <% (data.experience || []).forEach(function (item) { %>
+          <div class="timeline-item">
+            <div class="period"><%= item.period %></div>
+            <h3><%= item.company %></h3>
+            <div class="location"><%= item.location %></div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <section class="block section-alt" id="achievements">
+    <div class="container">
+      <h2>Achievements</h2>
+      <p class="section-sub">Milestones, awards and certifications — kept up to date from the back office.</p>
+      <div class="grid">
+        <% (data.achievements || []).forEach(function (item) { %>
+          <div class="card achievement-card">
+            <% if (item.category) { %><span class="badge amber"><%= item.category %></span><% } %>
+            <h3 style="margin-top:10px;"><%= item.title %></h3>
+            <% if (item.achievement_date) { %>
+              <div class="meta"><%= new Date(item.achievement_date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long' }) %></div>
+            <% } %>
+            <% if (item.description) { %><p><%= item.description %></p><% } %>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="projects">
+    <div class="container">
+      <h2>Project Experience</h2>
+      <p class="section-sub">A selection of QA and testing projects delivered.</p>
+      <div class="grid">
+        <% (data.projects || []).forEach(function (item) { %>
+          <div class="card project-card">
+            <% if (item.status) { %><span class="badge"><%= item.status %></span><% } %>
+            <h3><%= item.title %></h3>
+            <p><%= item.description %></p>
+            <% if (item.technology) { %><div class="meta"><strong>Technology:</strong> <%= item.technology %></div><% } %>
+            <% if (item.tools) { %><div class="meta"><strong>Tools:</strong> <%= item.tools %></div><% } %>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <section class="block section-alt" id="skills">
+    <div class="container">
+      <h2>Skills</h2>
+      <p class="section-sub">Core strengths I bring to every project.</p>
+      <div class="pill-list">
+        <% (data.skills || []).forEach(function (item) { %>
+          <span class="pill"><%= item.name %></span>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="education">
+    <div class="container">
+      <h2>Education</h2>
+      <div class="timeline">
+        <% (data.education || []).forEach(function (item) { %>
+          <div class="timeline-item">
+            <div class="period"><%= item.period %></div>
+            <h3><%= item.institution %></h3>
+            <div class="location"><%= item.qualification %></div>
+            <% if (item.details) { %><div class="location"><%= item.details %></div><% } %>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <section class="block section-alt" id="certifications">
+    <div class="container">
+      <h2>Certifications</h2>
+      <div class="card">
+        <% (data.certifications || []).forEach(function (item) { %>
+          <div class="cert-item">
+            <div>
+              <h3 style="margin:0 0 4px;font-size:1rem;"><%= item.name %></h3>
+              <div class="meta"><%= item.issuer %></div>
+              <% if (item.credential_id) { %><div class="meta">Credential ID: <%= item.credential_id %></div><% } %>
+            </div>
+            <div class="cert-date"><%= item.issued_date %></div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="container">
+      <h2>Referees</h2>
+      <div class="grid">
+        <% (data.referees || []).forEach(function (item) { %>
+          <div class="card referee-card">
+            <h3><%= item.name %></h3>
+            <p class="meta"><%= item.credentials %></p>
+            <% if (item.organization) { %><p class="meta"><%= item.organization %></p><% } %>
+            <% if (item.phone) { %><p class="meta">Tel: <%= item.phone %></p><% } %>
+            <% if (item.email) { %><p class="meta">Email: <%= item.email %></p><% } %>
+            <% if (item.linkedin) { %><p class="meta"><%= item.linkedin %></p><% } %>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

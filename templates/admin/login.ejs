@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body>
+  <div class="login-shell">
+    <div class="login-card">
+      <h1>Back Office Login</h1>
+      <p>Sign in to manage CV content and achievements.</p>
+      <% if (error) { %><div class="alert"><%= error %></div><% } %>
+      <form method="POST" action="/admin/login">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required autofocus />
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+        <div style="margin-top:20px;">
+          <button type="submit" class="btn" style="width:100%;">Log in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
