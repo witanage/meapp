@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+<% const extUrl = function (v) { v = String(v).trim(); return /^https?:\/\//i.test(v) ? v : 'https://' + v; }; %>
+<% const telUrl = function (v) { return 'tel:' + String(v).replace(/[^\d+]/g, ''); }; %>
 <%- include('partials/head') %>
 <body>
   <%- include('partials/nav') %>
@@ -12,10 +14,10 @@
       <div class="title" data-intro style="--i:3"><%= profile.title %></div>
       <p class="objective" data-intro style="--i:4"><%= profile.objective %></p>
       <div class="contact-row" data-intro style="--i:5">
-        <% if (profile.phone) { %><span>&#9742; <%= profile.phone %></span><% } %>
-        <% if (profile.email) { %><span>&#9993; <%= profile.email %></span><% } %>
+        <% if (profile.phone) { %><span>&#9742; <a href="<%= telUrl(profile.phone) %>" target="_blank" rel="noopener noreferrer"><%= profile.phone %></a></span><% } %>
+        <% if (profile.email) { %><span>&#9993; <a href="mailto:<%= profile.email %>" target="_blank" rel="noopener noreferrer"><%= profile.email %></a></span><% } %>
         <% if (profile.location) { %><span>&#8962; <%= profile.location %></span><% } %>
-        <% if (profile.linkedin) { %><span>&#128279; <%= profile.linkedin %></span><% } %>
+        <% if (profile.linkedin) { %><span>&#128279; <a href="<%= extUrl(profile.linkedin) %>" target="_blank" rel="noopener noreferrer"><%= profile.linkedin %></a></span><% } %>
       </div>
       <div class="qa" id="qa-graphs" role="img" aria-label="Animated QA dashboard showing test execution, pass-rate trend, defects and coverage"></div>
     </div>
@@ -129,9 +131,9 @@
             <h3><%= item.name %></h3>
             <p class="meta"><%= item.credentials %></p>
             <% if (item.organization) { %><p class="meta"><%= item.organization %></p><% } %>
-            <% if (item.phone) { %><p class="meta">Tel: <%= item.phone %></p><% } %>
-            <% if (item.email) { %><p class="meta">Email: <%= item.email %></p><% } %>
-            <% if (item.linkedin) { %><p class="meta"><%= item.linkedin %></p><% } %>
+            <% if (item.phone) { %><p class="meta">Tel: <a href="<%= telUrl(item.phone) %>" target="_blank" rel="noopener noreferrer"><%= item.phone %></a></p><% } %>
+            <% if (item.email) { %><p class="meta">Email: <a href="mailto:<%= item.email %>" target="_blank" rel="noopener noreferrer"><%= item.email %></a></p><% } %>
+            <% if (item.linkedin) { %><p class="meta"><a href="<%= extUrl(item.linkedin) %>" target="_blank" rel="noopener noreferrer"><%= item.linkedin %></a></p><% } %>
           </div>
         <% }); %>
       </div>
