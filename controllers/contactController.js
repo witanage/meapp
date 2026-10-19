@@ -24,6 +24,30 @@ async function verifyCaptcha(token, ip) {
   return result.success === true;
 }
 
+// Awaited so serverless runtimes don't freeze before it finishes; failures never block the user.
+async function notify({ name, email, subject, message }) {
+  const topic = process.env.NTFY_TOPIC;
+  if (!topic) return;
+  const headers = { 'Content-Type': 'application/json' };
+  if (process.env.NTFY_TOKEN) headers.Authorization = `Bearer ${process.env.NTFY_TOKEN}`;
+  try {
+    const r = await fetch(process.env.NTFY_URL || 'https://ntfy.sh', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        topic,
+        title: `New message from ${name}`,
+        message: `${email}${subject ? `\n${subject}` : ''}\n\n${message}`.slice(0, 3500),
+        tags: ['envelope'],
+      }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!r.ok) console.error(`ntfy notification failed: HTTP ${r.status} ${await r.text()}`);
+  } catch (err) {
+    console.error('ntfy notification failed:', err.message);
+  }
+}
+
 exports.send = async (req, res, next) => {
   try {
     if (throttled(req.ip)) return res.status(429).json({ error: 'Too many attempts. Try again later.' });
@@ -45,6 +69,7 @@ exports.send = async (req, res, next) => {
       'INSERT INTO contact_messages (name, email, subject, message, ip, user_agent) VALUES (?, ?, ?, ?, ?, ?)',
       [name, email, subject || null, message, String(req.ip || '').slice(0, 45), String(req.get('user-agent') || '').slice(0, 255)]
     );
+    await notify({ name, email, subject, message });
     res.json({ ok: true });
   } catch (err) {
     next(err);
