@@ -3,20 +3,44 @@
 <%- include('partials/head') %>
 <body>
   <div class="login-shell">
-    <div class="login-card">
-      <h1>Back Office Login</h1>
-      <p>Sign in to manage CV content and achievements.</p>
-      <% if (error) { %><div class="alert"><%= error %></div><% } %>
-      <form method="POST" action="/admin/login">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required autofocus />
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required />
-        <div style="margin-top:20px;">
-          <button type="submit" class="btn" style="width:100%;">Log in</button>
-        </div>
-      </form>
-    </div>
+    <aside class="login-aside" aria-hidden="true">
+      <div class="login-grid"></div>
+      <div class="login-brand">Chinthaka <span>Withanage</span></div>
+      <div class="login-pitch">
+        <h2>Back office</h2>
+        <p>Keep your CV, projects and achievements up to date in one place.</p>
+        <ul>
+          <li>Edit experience, skills and certifications</li>
+          <li>Publish changes to the portfolio instantly</li>
+          <li>Secure, session-based access</li>
+        </ul>
+      </div>
+      <div class="login-status"><i></i> All systems operational</div>
+    </aside>
+
+    <main class="login-main">
+      <div class="login-card">
+        <h1>Welcome back</h1>
+        <p>Sign in to manage your portfolio content.</p>
+        <% if (error) { %><div class="alert" role="alert"><%= error %></div><% } %>
+        <form method="POST" action="/admin/login" class="login-form">
+          <div class="field">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" autocomplete="username" required autofocus />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="pw-wrap">
+              <input type="password" id="password" name="password" autocomplete="current-password" required />
+              <button type="button" class="pw-toggle" data-pw-toggle aria-controls="password" aria-pressed="false">Show</button>
+            </div>
+          </div>
+          <button type="submit" class="btn login-submit">Log in</button>
+        </form>
+        <a class="login-back" href="/">&larr; Back to portfolio</a>
+      </div>
+    </main>
   </div>
+  <script src="/public/js/login.js"></script>
 </body>
 </html>

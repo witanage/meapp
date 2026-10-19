@@ -5,17 +5,19 @@
   <%- include('partials/nav') %>
 
   <header class="hero" id="about">
+    <div class="hero-grid" aria-hidden="true"></div>
     <div class="container">
-      <div class="eyebrow">Portfolio &amp; CV</div>
-      <h1><%= profile.name %></h1>
-      <div class="title"><%= profile.title %></div>
-      <p class="objective"><%= profile.objective %></p>
-      <div class="contact-row">
+      <div class="eyebrow" data-intro style="--i:0">Portfolio &amp; CV</div>
+      <h1 class="hero-title"><%= profile.name %></h1>
+      <div class="title" data-intro style="--i:3"><%= profile.title %></div>
+      <p class="objective" data-intro style="--i:4"><%= profile.objective %></p>
+      <div class="contact-row" data-intro style="--i:5">
         <% if (profile.phone) { %><span>&#9742; <%= profile.phone %></span><% } %>
         <% if (profile.email) { %><span>&#9993; <%= profile.email %></span><% } %>
         <% if (profile.location) { %><span>&#8962; <%= profile.location %></span><% } %>
         <% if (profile.linkedin) { %><span>&#128279; <%= profile.linkedin %></span><% } %>
       </div>
+      <div class="qa" id="qa-graphs" role="img" aria-label="Animated QA dashboard showing test execution, pass-rate trend, defects and coverage"></div>
     </div>
   </header>
 
