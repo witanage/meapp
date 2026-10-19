@@ -5,6 +5,6 @@ const publicController = require('../controllers/publicController');
 const cvController = require('../controllers/cvController');
 
 router.get('/', publicController.home);
-router.get('/cv.pdf', cvController.download);
+router.post('/cv/download', cvController.download);
 
 module.exports = router;

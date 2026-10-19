@@ -22,7 +22,8 @@ app.use(
         styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         imgSrc: ["'self'", 'data:'],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://www.google.com/recaptcha/', 'https://www.gstatic.com/recaptcha/'],
+        frameSrc: ['https://www.google.com/recaptcha/', 'https://recaptcha.google.com/recaptcha/'],
       },
     },
   })

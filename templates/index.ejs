@@ -9,19 +9,32 @@
 
   <header class="hero" id="about">
     <div class="hero-grid" aria-hidden="true"></div>
+    <div class="hero-scan" aria-hidden="true"></div>
     <div class="container">
-      <div class="eyebrow" data-intro style="--i:0">Portfolio &amp; CV</div>
+      <div class="eyebrow" data-intro style="--i:0"><span class="eyebrow-prompt">~/portfolio $</span> whoami<i class="caret" aria-hidden="true"></i></div>
       <h1 class="hero-title"><%= profile.name %></h1>
       <div class="title" data-intro style="--i:3"><%= profile.title %></div>
       <p class="objective" data-intro style="--i:4"><%= profile.objective %></p>
       <div class="contact-row" data-intro style="--i:5">
-        <% if (profile.phone) { %><span>&#9742; <a href="<%= telUrl(profile.phone) %>" target="_blank" rel="noopener noreferrer"><%= profile.phone %></a></span><% } %>
-        <% if (profile.email) { %><span>&#9993; <a href="mailto:<%= profile.email %>" target="_blank" rel="noopener noreferrer"><%= profile.email %></a></span><% } %>
-        <% if (profile.location) { %><span>&#8962; <%= profile.location %></span><% } %>
-        <% if (profile.linkedin) { %><span>&#128279; <a href="<%= extUrl(profile.linkedin) %>" target="_blank" rel="noopener noreferrer"><%= profile.linkedin %></a></span><% } %>
+        <% if (profile.phone) { %><span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><a href="<%= telUrl(profile.phone) %>" target="_blank" rel="noopener noreferrer"><%= profile.phone %></a></span><% } %>
+        <% if (profile.email) { %><span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg><a href="mailto:<%= profile.email %>" target="_blank" rel="noopener noreferrer"><%= profile.email %></a></span><% } %>
+        <% if (profile.location) { %><span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg><%= profile.location %></span><% } %>
+        <% if (profile.linkedin) { %><span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><a href="<%= extUrl(profile.linkedin) %>" target="_blank" rel="noopener noreferrer"><%= profile.linkedin %></a></span><% } %>
       </div>
       <% if (hasCv) { %>
-      <p data-intro style="--i:6; margin-top:20px;"><a class="btn" href="/cv.pdf" download>Download CV (PDF)</a></p>
+      <p data-intro style="--i:6; margin-top:20px;"><button type="button" class="btn" id="cv-open">Download CV (PDF)</button></p>
+      <div class="cv-modal" id="cv-modal" role="dialog" aria-modal="true" aria-labelledby="cv-title" hidden>
+        <form class="cv-dialog" id="cv-form" novalidate>
+          <h3 id="cv-title">Download CV</h3>
+          <label>Your email<input type="email" name="email" required autocomplete="email" maxlength="320"></label>
+          <div id="cv-captcha" data-sitekey="<%= recaptchaSiteKey %>"></div>
+          <p class="cv-error" id="cv-error" role="alert"></p>
+          <div class="cv-actions">
+            <button type="submit" class="btn">Download</button>
+            <button type="button" class="btn secondary" id="cv-cancel">Cancel</button>
+          </div>
+        </form>
+      </div>
       <% } %>
       <div class="qa" id="qa-graphs" role="img" aria-label="Animated QA dashboard showing test execution, pass-rate trend, defects and coverage"></div>
     </div>
@@ -139,7 +152,7 @@
   <% } %>
 
   <% if (show('referees')) { %>
-  <section class="block">
+  <section class="block" id="referees">
     <div class="container">
       <h2>Referees</h2>
       <div class="grid">
@@ -157,6 +170,33 @@
     </div>
   </section>
   <% } %>
+
+  <section class="block section-alt" id="contact">
+    <div class="container">
+      <h2>Get in touch</h2>
+      <p class="section-sub">Open to new QA and test engineering opportunities. Reach out using the details below or send a message.</p>
+      <div class="contact-layout">
+        <div class="card contact-info">
+          <h3>Let's work together</h3>
+          <span class="badge">Available for new opportunities</span>
+          <dl class="contact-facts">
+            <% if (profile.location) { %><dt>Based in</dt><dd><%= profile.location %></dd><% } %>
+            <% if (profile.email) { %><dt>Email</dt><dd><a href="mailto:<%= profile.email %>"><%= profile.email %></a></dd><% } %>
+            <% if (profile.phone) { %><dt>Phone</dt><dd><a href="<%= telUrl(profile.phone) %>"><%= profile.phone %></a></dd><% } %>
+            <% if (profile.linkedin) { %><dt>LinkedIn</dt><dd><a href="<%= extUrl(profile.linkedin) %>" target="_blank" rel="noopener noreferrer"><%= profile.linkedin %></a></dd><% } %>
+          </dl>
+        </div>
+        <form class="card contact-form" id="contact-form" data-email="<%= profile.email || '' %>">
+          <h3>Send a message</h3>
+          <label>Name<input type="text" name="name" required maxlength="100"></label>
+          <label>Email<input type="email" name="email" required maxlength="150"></label>
+          <label>Subject (optional)<input type="text" name="subject" maxlength="150"></label>
+          <label>Message<textarea name="message" rows="5" required maxlength="2000"></textarea></label>
+          <button type="submit" class="btn">Send message</button>
+        </form>
+      </div>
+    </div>
+  </section>
 
   <%- include('partials/footer') %>
 </body>

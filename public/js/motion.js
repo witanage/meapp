@@ -20,7 +20,9 @@
       if (nav) nav.classList.toggle('scrolled', y > 24);
       if (bar) {
         var max = document.documentElement.scrollHeight - window.innerHeight;
-        bar.style.width = (max > 0 ? (y / max) * 100 : 0).toFixed(2) + '%';
+        var pct = max > 0 ? (y / max) * 100 : 0;
+        bar.style.width = pct.toFixed(2) + '%';
+        if (topBtn) topBtn.style.setProperty('--sp', pct.toFixed(1) + '%');
       }
       if (topBtn) topBtn.classList.toggle('visible', y > 600);
 
