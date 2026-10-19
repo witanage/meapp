@@ -21,6 +21,7 @@ exports.home = async (req, res, next) => {
       pageTitle: 'Chinthaka Withanage | SQA Engineer',
       profile: profileRows[0] || {},
       hasCv: cvRows.length > 0,
+      recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY || '',
       visible,
       data,
     });

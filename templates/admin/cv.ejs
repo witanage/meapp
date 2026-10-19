@@ -40,6 +40,20 @@
           <button type="submit" class="btn danger">Remove CV</button>
         </form>
       <% } %>
+
+      <h2 style="margin-top:32px;">Recent downloads</h2>
+      <% if (downloads.length) { %>
+        <table class="admin-table">
+          <thead><tr><th>Email</th><th>IP</th><th>Date</th></tr></thead>
+          <tbody>
+            <% downloads.forEach(function (d) { %>
+              <tr><td><%= d.email %></td><td><%= d.ip %></td><td><%= new Date(d.downloaded_at).toLocaleString() %></td></tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No downloads yet.</p>
+      <% } %>
     </main>
   </div>
 </body>

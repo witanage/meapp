@@ -43,6 +43,7 @@
 
   host.innerHTML =
     '<div class="qa-bar">' +
+      '<div class="qa-chrome" aria-hidden="true"><i></i><i></i><i></i><span>ci/pipeline.yml</span></div>' +
       '<div class="qa-hud">' +
         '<span>build <b class="h-run">#128</b></span>' +
         '<span>tests <b class="h-tests">0</b></span>' +
@@ -62,19 +63,37 @@
   var hud = { run: q('.h-run'), tests: q('.h-tests'), rate: q('.h-rate'), open: q('.h-open') };
   var svg = el('svg', { class: 'qa-svg', viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true', focusable: 'false' }, q('.qa-stage'));
 
+  // ---- shared defs: gradients + glow ----
+  var defs = el('defs', {}, svg);
+  var ag = el('linearGradient', { id: 'qa-area-g', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+  el('stop', { offset: '0%', 'stop-color': '#61afef', 'stop-opacity': 0.35 }, ag);
+  el('stop', { offset: '100%', 'stop-color': '#61afef', 'stop-opacity': 0 }, ag);
+  var pg = el('linearGradient', { id: 'qa-panel-g', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+  el('stop', { offset: '0%', 'stop-color': '#61afef', 'stop-opacity': 0.08 }, pg);
+  el('stop', { offset: '100%', 'stop-color': '#61afef', 'stop-opacity': 0 }, pg);
+  var glow = el('filter', { id: 'qa-glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, defs);
+  el('feGaussianBlur', { stdDeviation: 3, result: 'b' }, glow);
+  var fm = el('feMerge', {}, glow);
+  el('feMergeNode', { in: 'b' }, fm);
+  el('feMergeNode', { in: 'SourceGraphic' }, fm);
+
   // ---- pipeline nodes and links ----
   var cx = function (i) { return X0 + i * (NW + GAP) + NW / 2; };
   for (var i = 0; i < 7; i++) {
     el('line', { x1: cx(i) + NW / 2, y1: NY + NH / 2, x2: cx(i + 1) - NW / 2, y2: NY + NH / 2, class: 'qa-link' }, svg);
+    el('line', { x1: cx(i) + NW / 2, y1: NY + NH / 2, x2: cx(i + 1) - NW / 2, y2: NY + NH / 2, class: 'qa-beam', style: 'animation-delay:' + (i * 0.18) + 's' }, svg);
   }
   var nodes = STAGES.map(function (s, i) {
     var g = el('g', { class: 'qa-node' }, svg);
     var x = cx(i) - NW / 2;
-    el('rect', { x: x, y: NY, width: NW, height: NH, rx: 10, class: 'qa-box' }, g);
-    txt(g, cx(i), NY + 20, s.t, 'qa-title qa-c');
-    txt(g, cx(i), NY + 34, s.s, 'qa-sub qa-c');
-    el('rect', { x: x + 10, y: NY + NH - 14, width: NW - 20, height: 4, rx: 2, class: 'qa-track' }, g);
-    var bar = el('rect', { x: x + 10, y: NY + NH - 14, width: 0, height: 4, rx: 2, class: 'qa-fill' }, g);
+    el('rect', { x: x, y: NY, width: NW, height: NH, rx: 8, class: 'qa-box' }, g);
+    el('path', { d: 'M' + (x + 8) + ' ' + NY + ' H' + (x + NW - 8), class: 'qa-edge' }, g);
+    txt(g, x + 8, NY + 13, String(i + 1).padStart(2, '0'), 'qa-idx');
+    el('circle', { cx: x + NW - 10, cy: NY + 10, r: 3, class: 'qa-led' }, g);
+    txt(g, cx(i), NY + 29, s.t, 'qa-title qa-c');
+    txt(g, cx(i), NY + 42, s.s, 'qa-sub qa-c');
+    el('rect', { x: x + 10, y: NY + NH - 11, width: NW - 20, height: 3, rx: 1.5, class: 'qa-track' }, g);
+    var bar = el('rect', { x: x + 10, y: NY + NH - 11, width: 0, height: 3, rx: 1.5, class: 'qa-fill' }, g);
     var cnt = txt(g, cx(i), NY + NH + 14, s.n ? '0 / ' + s.n : '', 'qa-sub qa-c');
     return { g: g, bar: bar, cnt: cnt, w: NW - 20 };
   });
@@ -89,16 +108,20 @@
 
   // ---- bottom panels ----
   function panel(x, w, title) {
-    el('rect', { x: x, y: 172, width: w, height: 166, rx: 12, class: 'qa-panel' }, svg);
-    txt(svg, x + 14, 192, title, 'qa-title');
+    el('rect', { x: x, y: 172, width: w, height: 166, rx: 10, class: 'qa-panel' }, svg);
+    el('rect', { x: x + 1, y: 173, width: w - 2, height: 30, rx: 9, class: 'qa-panel-hd', fill: 'url(#qa-panel-g)' }, svg);
+    el('path', { d: 'M' + x + ' 186 V182 a10 10 0 0 1 10 -10 H' + (x + 26), class: 'qa-corner' }, svg);
+    el('path', { d: 'M' + (x + w - 26) + ' 338 H' + (x + w - 10) + ' a10 10 0 0 0 10 -10 V' + 324, class: 'qa-corner' }, svg);
+    txt(svg, x + 14, 192, title.toUpperCase(), 'qa-title qa-caps');
   }
   panel(12, 300, 'Test report');
   panel(TX - 14, TW + 28, 'Pass-rate trend');
   panel(646, 242, 'Defect tracker');
 
-  var rp = el('rect', { x: 26, y: 206, width: 0, height: 10, rx: 3, class: 'qa-ok' }, svg);
-  var rs = el('rect', { x: 26, y: 206, width: 0, height: 10, class: 'qa-warn' }, svg);
-  var rf = el('rect', { x: 26, y: 206, width: 0, height: 10, rx: 3, class: 'qa-bad' }, svg);
+  el('rect', { x: 26, y: 212, width: 272, height: 6, rx: 3, class: 'qa-track' }, svg);
+  var rp = el('rect', { x: 26, y: 212, width: 0, height: 6, rx: 3, class: 'qa-ok' }, svg);
+  var rs = el('rect', { x: 26, y: 212, width: 0, height: 6, class: 'qa-warn' }, svg);
+  var rf = el('rect', { x: 26, y: 212, width: 0, height: 6, rx: 3, class: 'qa-bad' }, svg);
   var rep = {
     pass: txt(svg, 26, 240, 'passed 0', 'qa-big qa-okt'),
     fail: txt(svg, 26, 262, 'failed 0', 'qa-sub qa-badt'),
@@ -106,13 +129,20 @@
     dur: txt(svg, 26, 294, 'duration 0m 00s', 'qa-sub'),
     cov: txt(svg, 26, 310, 'coverage 84%', 'qa-sub')
   };
-  txt(svg, 190, 240, 'Allure + HTML', 'qa-sub');
-  txt(svg, 190, 254, 'report published', 'qa-sub');
+  var RING_R = 26, RING_C = 2 * Math.PI * RING_R;
+  el('circle', { cx: 246, cy: 268, r: RING_R, class: 'qa-ring-bg' }, svg);
+  var ring = el('circle', { cx: 246, cy: 268, r: RING_R, class: 'qa-ring', 'stroke-dasharray': RING_C.toFixed(1), transform: 'rotate(-90 246 268)' }, svg);
+  var ringTxt = txt(svg, 246, 272, '84%', 'qa-title qa-c');
+  txt(svg, 246, 312, 'coverage', 'qa-sub qa-c');
 
+  for (var gl = 0; gl <= 4; gl++) {
+    el('line', { x1: TX, y1: TY + (TH / 4) * gl, x2: TX + TW, y2: TY + (TH / 4) * gl, class: 'qa-gridl' }, svg);
+  }
   el('line', { x1: TX, y1: TY + TH * 0.25, x2: TX + TW, y2: TY + TH * 0.25, class: 'qa-target' }, svg);
-  txt(svg, TX + TW, TY + TH * 0.25 - 4, '95% gate', 'qa-sub qa-end');
-  var area = el('path', { class: 'qa-area' }, svg);
-  var line = el('path', { class: 'qa-line' }, svg);
+  txt(svg, TX + 2, TY + TH * 0.25 - 4, '95% gate', 'qa-sub qa-warnt');
+  var area = el('path', { class: 'qa-area', fill: 'url(#qa-area-g)' }, svg);
+  var line = el('path', { class: 'qa-line', filter: 'url(#qa-glow)' }, svg);
+  var tipRing = el('circle', { r: 8, class: 'qa-tip-ring' }, svg);
   var tip = el('circle', { r: 3.5, class: 'qa-tip' }, svg);
   var yOf = function (p) { return TY + TH - ((clamp(p, 80, 100) - 80) / 20) * TH; };
 
@@ -123,8 +153,11 @@
   var defBox = { x: 646 + 121, y: 172 };
 
   // ---- packet (one build moving through the pipeline) ----
-  var halo = el('circle', { r: 11, class: 'qa-pkt-halo' }, svg);
-  var pkt = el('circle', { r: 6, class: 'qa-pkt' }, svg);
+  var TRAIL_N = 10, trailPts = [];
+  var trail = [];
+  for (var tr = 0; tr < TRAIL_N; tr++) trail.push(el('circle', { r: 5 * (1 - tr / TRAIL_N), class: 'qa-trail', opacity: (0.5 * (1 - tr / TRAIL_N)).toFixed(2) }, svg));
+  var halo = el('circle', { r: 12, class: 'qa-pkt-halo' }, svg);
+  var pkt = el('circle', { r: 5.5, class: 'qa-pkt', filter: 'url(#qa-glow)' }, svg);
   var pkx = cx(0), pky = NY + NH / 2;
 
   // ---- state ----
@@ -137,6 +170,12 @@
   function setPkt(x, y) {
     pkx = x; pky = y;
     [pkt, halo].forEach(function (c) { c.setAttribute('cx', x.toFixed(1)); c.setAttribute('cy', y.toFixed(1)); });
+    trailPts.unshift([x, y]);
+    if (trailPts.length > TRAIL_N * 2) trailPts.length = TRAIL_N * 2;
+    trail.forEach(function (c, k) {
+      var p = trailPts[Math.min(trailPts.length - 1, k * 2)];
+      c.setAttribute('cx', p[0].toFixed(1)); c.setAttribute('cy', p[1].toFixed(1));
+    });
     followPacket(x);
   }
 
@@ -154,15 +193,24 @@
   function setPktState(cls) {
     pkt.setAttribute('class', 'qa-pkt ' + cls);
     halo.setAttribute('class', 'qa-pkt-halo ' + cls);
+    trail.forEach(function (c) { c.setAttribute('class', 'qa-trail ' + cls); });
   }
 
   function renderTrend() {
     var step = TW / (TREND_N - 1);
-    var d = series.map(function (v, i) { return (i ? 'L' : 'M') + (TX + i * step).toFixed(1) + ' ' + yOf(v).toFixed(1); }).join(' ');
+    var P = series.map(function (v, i) { return [TX + i * step, yOf(v)]; });
+    var f = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
+    // Catmull-Rom to cubic Bezier for a smooth trend curve
+    var d = 'M' + f(P[0]);
+    for (var k = 0; k < P.length - 1; k++) {
+      var p0 = P[k - 1] || P[k], p1 = P[k], p2 = P[k + 1], p3 = P[k + 2] || p2;
+      d += ' C' + f([p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6]) +
+        ' ' + f([p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6]) + ' ' + f(p2);
+    }
     line.setAttribute('d', d);
     area.setAttribute('d', d + ' L' + (TX + TW) + ' ' + (TY + TH) + ' L' + TX + ' ' + (TY + TH) + ' Z');
-    tip.setAttribute('cx', TX + TW);
-    tip.setAttribute('cy', yOf(series[series.length - 1]).toFixed(1));
+    var ly = yOf(series[series.length - 1]).toFixed(1);
+    [tip, tipRing].forEach(function (c) { c.setAttribute('cx', TX + TW); c.setAttribute('cy', ly); });
   }
 
   function renderReport() {
@@ -175,7 +223,9 @@
     rep.fail.textContent = 'failed ' + failed;
     rep.flaky.textContent = 'flaky ' + flaky;
     rep.dur.textContent = 'duration ' + Math.floor(secs / 60) + 'm ' + String(Math.floor(secs % 60)).padStart(2, '0') + 's';
-    rep.cov.textContent = 'coverage ' + Math.round(coverage) + '%';
+    rep.cov.textContent = 'gate pass >= 95%';
+    ring.setAttribute('stroke-dashoffset', (RING_C * (1 - coverage / 100)).toFixed(1));
+    ringTxt.textContent = Math.round(coverage) + '%';
   }
 
   function renderHud() {
@@ -202,6 +252,7 @@
     if (forceFail || Math.random() < 0.28) failAt = 1 + Math.floor(Math.random() * 5);
     forceFail = false;
     b = { i: 0, mode: 'work', t: 0, failAt: failAt, wps: null };
+    trailPts = [];
     setPkt(cx(0), NY + NH / 2);
     nodes[0].g.classList.add('is-work');
   }
