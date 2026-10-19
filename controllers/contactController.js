@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const pool = require('../config/db');
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,10 +25,10 @@ async function verifyCaptcha(token, ip) {
   return result.success === true;
 }
 
-// Awaited so serverless runtimes don't freeze before it finishes; failures never block the user.
+// Returns true when delivered (or ntfy is not configured); never throws.
 async function notify({ name, email, subject, message }) {
   const topic = process.env.NTFY_TOPIC;
-  if (!topic) return;
+  if (!topic) return true;
   const headers = { 'Content-Type': 'application/json' };
   if (process.env.NTFY_TOKEN) headers.Authorization = `Bearer ${process.env.NTFY_TOKEN}`;
   try {
@@ -42,9 +43,59 @@ async function notify({ name, email, subject, message }) {
       }),
       signal: AbortSignal.timeout(5000),
     });
-    if (!r.ok) console.error(`ntfy notification failed: HTTP ${r.status} ${await r.text()}`);
+    if (!r.ok) {
+      console.error(`ntfy notification failed: HTTP ${r.status} ${await r.text()}`);
+      return false;
+    }
+    return true;
   } catch (err) {
     console.error('ntfy notification failed:', err.message);
+    return false;
+  }
+}
+
+const MAX_ATTEMPTS = 20;
+
+// Retries queued notifications oldest-first; stops at the first failure since ntfy is likely still down.
+async function flushQueue() {
+  const result = { sent: 0, remaining: 0 };
+  if (!process.env.NTFY_TOPIC) return result;
+  const [rows] = await pool.query('SELECT id, payload, attempts FROM notification_queue ORDER BY id LIMIT 50');
+  for (const row of rows) {
+    if (await notify(JSON.parse(row.payload))) {
+      await pool.query('DELETE FROM notification_queue WHERE id = ?', [row.id]);
+      result.sent++;
+    } else {
+      if (row.attempts + 1 >= MAX_ATTEMPTS) await pool.query('DELETE FROM notification_queue WHERE id = ?', [row.id]);
+      else await pool.query('UPDATE notification_queue SET attempts = attempts + 1 WHERE id = ?', [row.id]);
+      break;
+    }
+  }
+  const [[{ n }]] = await pool.query('SELECT COUNT(*) AS n FROM notification_queue');
+  result.remaining = n;
+  return result;
+}
+
+exports.flush = async (req, res, next) => {
+  try {
+    const secret = process.env.CRON_SECRET;
+    const given = Buffer.from(String(req.get('authorization') || ''));
+    const expected = Buffer.from(`Bearer ${secret}`);
+    if (!secret || given.length !== expected.length || !crypto.timingSafeEqual(given, expected)) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    res.json(await flushQueue());
+  } catch (err) {
+    next(err);
+  }
+};
+
+async function notifyOrQueue(data) {
+  if (await notify(data)) return;
+  try {
+    await pool.query('INSERT INTO notification_queue (payload) VALUES (?)', [JSON.stringify(data)]);
+  } catch (err) {
+    console.error('failed to queue notification:', err.message);
   }
 }
 
@@ -69,7 +120,7 @@ exports.send = async (req, res, next) => {
       'INSERT INTO contact_messages (name, email, subject, message, ip, user_agent) VALUES (?, ?, ?, ?, ?, ?)',
       [name, email, subject || null, message, String(req.ip || '').slice(0, 45), String(req.get('user-agent') || '').slice(0, 255)]
     );
-    await notify({ name, email, subject, message });
+    await notifyOrQueue({ name, email, subject, message });
     res.json({ ok: true });
   } catch (err) {
     next(err);
