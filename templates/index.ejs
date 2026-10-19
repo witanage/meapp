@@ -71,7 +71,14 @@
             <% if (item.achievement_date) { %>
               <div class="meta"><%= new Date(item.achievement_date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long' }) %></div>
             <% } %>
-            <% if (item.description) { %><p><%= item.description %></p><% } %>
+            <% if (item.description) { %>
+              <% const credMatch = /^([\s\S]*?credential id\s+)([A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)([\s\S]*)$/i.exec(item.description); %>
+              <% if (credMatch) { %>
+                <p><%= credMatch[1] %><span class="credential-copy credential-copy-inline"><span class="credential-id"><%= credMatch[2] %></span><%- include('partials/copy-credential-button') %></span><%= credMatch[3] %></p>
+              <% } else { %>
+                <p><%= item.description %></p>
+              <% } %>
+            <% } %>
           </div>
         <% }); %>
       </div>
@@ -141,7 +148,12 @@
             <div>
               <h3 style="margin:0 0 4px;font-size:1rem;"><%= item.name %></h3>
               <div class="meta"><%= item.issuer %></div>
-              <% if (item.credential_id) { %><div class="meta">Credential ID: <%= item.credential_id %></div><% } %>
+              <% if (item.credential_id) { %>
+                <div class="meta credential-copy">
+                  <span>Credential ID: <span class="credential-id"><%= item.credential_id %></span></span>
+                  <%- include('partials/copy-credential-button') %>
+                </div>
+              <% } %>
             </div>
             <div class="cert-date"><%= item.issued_date %></div>
           </div>
@@ -192,8 +204,28 @@
           <label>Email<input type="email" name="email" required maxlength="150"></label>
           <label>Subject (optional)<input type="text" name="subject" maxlength="150"></label>
           <label>Message<textarea name="message" rows="5" required maxlength="2000"></textarea></label>
+          <p class="cv-error" id="contact-status" role="alert"></p>
           <button type="submit" class="btn">Send message</button>
         </form>
+        <div class="cv-modal" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-captcha-title" hidden>
+          <div class="cv-dialog">
+            <h3 id="contact-captcha-title">Verify you're human</h3>
+            <div id="contact-captcha" data-sitekey="<%= recaptchaSiteKey %>"></div>
+            <p class="cv-error" id="contact-captcha-error" role="alert"></p>
+            <div class="cv-actions">
+              <button type="button" class="btn secondary" id="contact-cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div class="cv-modal" id="contact-success" role="dialog" aria-modal="true" aria-labelledby="contact-success-title" hidden>
+          <div class="cv-dialog">
+            <h3 id="contact-success-title">Message sent</h3>
+            <p>Thank you for reaching out. I'll get back to you soon.</p>
+            <div class="cv-actions">
+              <button type="button" class="btn" id="contact-success-close">Close</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>

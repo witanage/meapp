@@ -1622,6 +1622,7 @@ section.block h2.st-rv.st-in::after {
   border-radius: 999px;
   border: 1px solid transparent;
   font-size: 0.9rem;
+  white-space: nowrap;
   transition: color 0.2s, background-color 0.2s, border-color 0.2s;
 }
 
@@ -1642,6 +1643,7 @@ section.block h2.st-rv.st-in::after {
 
 .site-nav ul a[href='#contact'] {
   margin-left: 6px;
+  padding: 8px 18px;
   background: var(--btn-bg);
   color: var(--btn-text);
   font-weight: 600;
@@ -1658,6 +1660,10 @@ section.block h2.st-rv.st-in::after {
   margin-left: 6px;
   padding-left: 14px;
   border-left: 1px solid var(--border);
+}
+
+.theme-toggle-btn {
+  white-space: nowrap;
 }
 
 @media (max-width: 1000px) {
@@ -2457,6 +2463,61 @@ section.block .card:hover {
 
 .cert-item:hover {
   background: var(--signal-soft);
+}
+
+.credential-copy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.credential-copy-inline {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.copy-credential {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 3px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.copy-credential:hover,
+.copy-credential:focus-visible {
+  color: var(--signal);
+  background: var(--signal-soft);
+}
+
+.copy-credential svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.copy-credential .copied-icon,
+.copy-credential.is-copied .copy-icon {
+  display: none;
+}
+
+.copy-credential.is-copied .copied-icon {
+  display: block;
+  color: var(--signal);
+}
+
+.copy-status {
+  font-size: 0.75rem;
 }
 
 .cert-date {

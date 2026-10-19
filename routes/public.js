@@ -6,5 +6,6 @@ const cvController = require('../controllers/cvController');
 
 router.get('/', publicController.home);
 router.post('/cv/download', cvController.download);
+router.post('/contact', require('../controllers/contactController').send);
 
 module.exports = router;
