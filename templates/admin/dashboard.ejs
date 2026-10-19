@@ -10,10 +10,16 @@
       </div>
       <div class="dashboard-grid">
         <% Object.keys(counts).forEach(function (key) { %>
-          <a class="dashboard-card" href="/admin/<%= key %>" style="text-decoration:none;color:inherit;">
-            <div class="count"><%= counts[key].count %></div>
-            <div><%= counts[key].title %></div>
-          </a>
+          <div class="dashboard-card">
+            <a href="/admin/<%= key %>" style="text-decoration:none;color:inherit;display:block;">
+              <div class="count"><%= counts[key].count %></div>
+              <div><%= counts[key].title %></div>
+            </a>
+            <form method="POST" action="/admin/visibility/<%= key %>" style="margin-top:10px;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn secondary"><%= counts[key].visible ? 'Visible - hide' : 'Hidden - show' %></button>
+            </form>
+          </div>
         <% }); %>
       </div>
     </main>

@@ -1,5 +1,5 @@
 (function () {
-  var STORAGE_KEY = 'theme-preference';
+  var STORAGE_KEY = 'theme-preference-v2';
 
   function currentTheme() {
     return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';

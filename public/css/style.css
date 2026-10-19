@@ -1,8 +1,8 @@
 /* Dark control-plane theme: navy blueprint grid, one cyan signal accent */
 :root {
   color-scheme: dark;
-  --navy: #21222c;
-  --navy-light: #282a36;
+  --navy: #0c0d11;
+  --navy-light: #111217;
   --teal: #61afef;
   --teal-dark: #61afef;
   --amber: #ffb86c;
@@ -11,10 +11,10 @@
   --text: #e6e6e0;
   --heading: #f8f8f2;
   --muted: #9aa1c9;
-  --bg: #282a36;
-  --bg-alt: #242530;
-  --card: #2f3142;
-  --border: #44475a;
+  --bg: #101116;
+  --bg-alt: #0c0d11;
+  --card: #16171e;
+  --border: #262836;
   --danger: #ff5555;
   --radius: 16px;
   --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px rgba(0, 0, 0, 0.35);
@@ -25,10 +25,10 @@
   --signal-line: rgba(97, 175, 239, 0.4);
   --grid-line: rgba(97, 175, 239, 0.06);
   --grid-line-hot: rgba(97, 175, 239, 0.3);
-  --nav-bg: rgba(40, 42, 54, 0.8);
+  --nav-bg: rgba(16, 17, 22, 0.82);
   --btn-bg: #61afef;
   --btn-hover: #8cc4f5;
-  --btn-text: #282a36;
+  --btn-text: #14151b;
 
   --font-sans: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -48,7 +48,7 @@
   --bg: #ffffff;
   --bg-alt: #f4f7fa;
   --card: #ffffff;
-  --border: #f8f8f2;
+  --border: #e2e8f0;
   --danger: #b91c1c;
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 10px 28px rgba(15, 23, 42, 0.06);
 
@@ -1257,7 +1257,7 @@ section.block h2.st-rv.st-in::after {
   overflow: hidden;
   border-radius: 20px;
   border: 1px solid #44475a;
-  background: radial-gradient(80% 60% at 50% 30%, rgba(97, 175, 239, 0.1), transparent 70%), #1e1f29;
+  background: radial-gradient(80% 60% at 50% 30%, rgba(97, 175, 239, 0.1), transparent 70%), #08090c;
   color: #f8f8f2;
   box-shadow: 0 40px 90px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(97, 175, 239, 0.1);
 }
@@ -1421,7 +1421,7 @@ section.block h2.st-rv.st-in::after {
 }
 
 .qa-box {
-  fill: #21222c;
+  fill: #0c0d11;
   stroke: rgba(97, 175, 239, 0.4);
   stroke-width: 1;
   transition: fill 0.3s, stroke 0.3s;
@@ -1458,7 +1458,7 @@ section.block h2.st-rv.st-in::after {
 }
 
 .qa-chip-bg {
-  fill: #21222c;
+  fill: #0c0d11;
   stroke: #44475a;
   stroke-width: 1;
   transition: fill 0.3s, stroke 0.3s;
@@ -1478,7 +1478,7 @@ section.block h2.st-rv.st-in::after {
 }
 
 .qa-panel {
-  fill: rgba(33, 34, 44, 0.7);
+  fill: rgba(12, 13, 17, 0.7);
   stroke: #44475a;
   stroke-width: 1;
 }
@@ -1708,7 +1708,7 @@ section.block h2.st-rv.st-in::after {
   justify-content: space-between;
   gap: 2rem;
   padding: clamp(32px, 5vw, 64px);
-  background: linear-gradient(160deg, #21222c 0%, #282a36 60%, #2f3142 100%);
+  background: linear-gradient(160deg, #08090c 0%, #0c0d11 60%, #14151b 100%);
   border-right: 1px solid var(--border);
   color: #f8f8f2;
 }
@@ -1952,4 +1952,19 @@ section.block h2.st-rv.st-in::after {
   .site-nav .container {
     gap: 1rem;
   }
+}
+
+.contact-row a,
+.referee-card .meta a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--signal-line);
+  text-underline-offset: 3px;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.contact-row a:hover,
+.referee-card .meta a:hover {
+  color: var(--signal);
+  text-decoration-color: var(--signal);
 }
