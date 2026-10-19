@@ -2,6 +2,7 @@
 <html lang="en">
 <% const extUrl = function (v) { v = String(v).trim(); return /^https?:\/\//i.test(v) ? v : 'https://' + v; }; %>
 <% const telUrl = function (v) { return 'tel:' + String(v).replace(/[^\d+]/g, ''); }; %>
+<% const show = function (k) { return visible[k] !== false; }; %>
 <%- include('partials/head') %>
 <body>
   <%- include('partials/nav') %>
@@ -19,10 +20,14 @@
         <% if (profile.location) { %><span>&#8962; <%= profile.location %></span><% } %>
         <% if (profile.linkedin) { %><span>&#128279; <a href="<%= extUrl(profile.linkedin) %>" target="_blank" rel="noopener noreferrer"><%= profile.linkedin %></a></span><% } %>
       </div>
+      <% if (hasCv) { %>
+      <p data-intro style="--i:6; margin-top:20px;"><a class="btn" href="/cv.pdf" download>Download CV (PDF)</a></p>
+      <% } %>
       <div class="qa" id="qa-graphs" role="img" aria-label="Animated QA dashboard showing test execution, pass-rate trend, defects and coverage"></div>
     </div>
   </header>
 
+  <% if (show('experience')) { %>
   <section class="block" id="experience">
     <div class="container">
       <h2>Career</h2>
@@ -38,7 +43,9 @@
       </div>
     </div>
   </section>
+  <% } %>
 
+  <% if (show('achievements')) { %>
   <section class="block section-alt" id="achievements">
     <div class="container">
       <h2>Achievements</h2>
@@ -57,7 +64,9 @@
       </div>
     </div>
   </section>
+  <% } %>
 
+  <% if (show('projects')) { %>
   <section class="block" id="projects">
     <div class="container">
       <h2>Project Experience</h2>
@@ -75,7 +84,9 @@
       </div>
     </div>
   </section>
+  <% } %>
 
+  <% if (show('skills')) { %>
   <section class="block section-alt" id="skills">
     <div class="container">
       <h2>Skills</h2>
@@ -87,7 +98,9 @@
       </div>
     </div>
   </section>
+  <% } %>
 
+  <% if (show('education')) { %>
   <section class="block" id="education">
     <div class="container">
       <h2>Education</h2>
@@ -103,7 +116,9 @@
       </div>
     </div>
   </section>
+  <% } %>
 
+  <% if (show('certifications')) { %>
   <section class="block section-alt" id="certifications">
     <div class="container">
       <h2>Certifications</h2>
@@ -121,7 +136,9 @@
       </div>
     </div>
   </section>
+  <% } %>
 
+  <% if (show('referees')) { %>
   <section class="block">
     <div class="container">
       <h2>Referees</h2>
@@ -139,6 +156,7 @@
       </div>
     </div>
   </section>
+  <% } %>
 
   <%- include('partials/footer') %>
 </body>

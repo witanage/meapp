@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head') %>
+<body>
+  <div class="admin-shell">
+    <%- include('partials/sidebar') %>
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1><%= pageTitle %></h1>
+      </div>
+
+      <% if (error) { %><div class="alert"><%= error %></div><% } %>
+      <% if (success) { %><div class="alert"><%= success %></div><% } %>
+
+      <% if (cv) { %>
+        <p>Current file: <strong><%= cv.filename %></strong> (<%= Math.round(cv.size / 1024) %> KB).
+          <a href="/cv.pdf" target="_blank" rel="noopener">Download</a></p>
+      <% } else { %>
+        <p>No CV uploaded yet.</p>
+      <% } %>
+
+      <form class="admin-form" method="POST" action="/admin/cv" enctype="multipart/form-data">
+        <label for="cv">Upload new PDF (max 4 MB)</label>
+        <input type="file" id="cv" name="cv" accept="application/pdf,.pdf" required />
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div style="margin-top:24px;">
+          <button type="submit" class="btn">Upload</button>
+        </div>
+      </form>
+
+      <% if (cv) { %>
+        <form class="admin-form" method="POST" action="/admin/cv/toggle" style="margin-top:16px;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <p>Public download button: <strong><%= cv.enabled ? 'Enabled' : 'Disabled' %></strong></p>
+          <button type="submit" class="btn secondary"><%= cv.enabled ? 'Disable' : 'Enable' %> button</button>
+        </form>
+
+        <form class="admin-form" method="POST" action="/admin/cv/delete" style="margin-top:16px;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button type="submit" class="btn danger">Remove CV</button>
+        </form>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>
