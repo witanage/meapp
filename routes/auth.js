@@ -14,5 +14,7 @@ const loginLimiter = rateLimit({
 
 router.get('/', authController.loginForm);
 router.post('/', loginLimiter, authController.login);
+router.get('/verify', authController.verifyForm);
+router.post('/verify', loginLimiter, authController.verify);
 
 module.exports = router;

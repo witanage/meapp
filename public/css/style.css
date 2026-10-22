@@ -2940,3 +2940,30 @@ section.block .card:hover {
 :root[data-theme='light'] .qa-tip { fill: #ffffff; stroke: #2563eb; }
 :root[data-theme='light'] .qa-pkt { fill: #2563eb; }
 :root[data-theme='light'] .qa-pkt-halo { fill: rgba(37, 99, 235, 0.2); }
+
+/* ---------- Mobile refinements ---------- */
+img, svg, video, canvas { max-width: 100%; height: auto; }
+h1, h2, h3, p, li, dd { overflow-wrap: anywhere; }
+.admin-main, .admin-shell > * { min-width: 0; }
+
+@media (max-width: 720px) {
+  .btn, .nav-toggle-btn, .theme-toggle-btn, .site-nav ul a, .admin-sidebar nav a { min-height: 44px; }
+  input, select, textarea { font-size: 16px; }
+  .contact-form input, .contact-form textarea { font-size: 16px; }
+  .btn { max-width: 100%; }
+  pre, code { overflow-x: auto; max-width: 100%; }
+  h2 { font-size: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 14px; }
+  .admin-main { padding: 18px 14px; }
+  .login-card { padding: 22px 16px; }
+  .login-aside { padding: 20px 16px; }
+  .hero { padding: 36px 0 44px; }
+  section.block { padding: 32px 0; }
+}
+
+@media (max-width: 360px) {
+  .grid, .dashboard-grid { grid-template-columns: 1fr; }
+}

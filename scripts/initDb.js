@@ -23,6 +23,11 @@ async function main() {
     console.log('Applying schema...');
     await runSqlFile(connection, path.join(__dirname, '..', 'db', 'schema.sql'));
 
+    const [col] = await connection.query(
+      "SELECT 1 FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'admins' AND column_name = 'totp_secret'"
+    );
+    if (!col.length) await connection.query('ALTER TABLE admins ADD COLUMN totp_secret VARCHAR(64) NULL');
+
     const [adminRows] = await connection.query('SELECT COUNT(*) AS count FROM admins');
     if (adminRows[0].count > 0) {
       console.log('Admin user already exists — skipping bootstrap.');
