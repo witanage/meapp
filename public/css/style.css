@@ -914,29 +914,24 @@ body {
   pointer-events: none;
 }
 
-.hero-grid,
-.hero-grid::after {
+/* Honeycomb lattice (56x97 tile); hero-net.js draws test-result cells on the same lattice */
+.hero-grid {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 44px 44px;
-  background-position: -1px -1px;
-}
-
-.hero-grid {
-  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 60% 40%, #000 30%, transparent 78%);
-  mask-image: radial-gradient(ellipse 85% 75% at 60% 40%, #000 30%, transparent 78%);
-}
-
-.hero-grid::after {
-  content: '';
-  background-image: linear-gradient(var(--grid-line-hot) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line-hot) 1px, transparent 1px);
-  -webkit-mask-image: radial-gradient(220px circle at var(--hx, -999px) var(--hy, -999px), #000, transparent 70%);
-  mask-image: radial-gradient(220px circle at var(--hx, -999px) var(--hy, -999px), #000, transparent 70%);
+  background: var(--grid-line-hot);
+  opacity: 0.5;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97'%3E%3Cpath d='M28 0V16.17L56 32.33V64.67L28 80.83V97M28 80.83L0 64.67V32.33L28 16.17' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 85% 75% at 60% 40%, #000 30%, transparent 78%);
+  -webkit-mask-composite: source-in;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97'%3E%3Cpath d='M28 0V16.17L56 32.33V64.67L28 80.83V97M28 80.83L0 64.67V32.33L28 16.17' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 85% 75% at 60% 40%, #000 30%, transparent 78%);
+  mask-composite: intersect;
+  -webkit-mask-size: 56px 97px, 100% 100%;
+  mask-size: 56px 97px, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  mask-repeat: repeat, no-repeat;
 }
 
 .hero .eyebrow {
@@ -1734,11 +1729,17 @@ section.block h2.st-rv.st-in::after {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background-image: linear-gradient(rgba(97, 175, 239, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(97, 175, 239, 0.07) 1px, transparent 1px);
-  background-size: 44px 44px;
-  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 30% 40%, #000 30%, transparent 80%);
-  mask-image: radial-gradient(ellipse 90% 80% at 30% 40%, #000 30%, transparent 80%);
+  background: rgba(97, 175, 239, 0.14);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97'%3E%3Cpath d='M28 0V16.17L56 32.33V64.67L28 80.83V97M28 80.83L0 64.67V32.33L28 16.17' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 90% 80% at 30% 40%, #000 30%, transparent 80%);
+  -webkit-mask-composite: source-in;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97'%3E%3Cpath d='M28 0V16.17L56 32.33V64.67L28 80.83V97M28 80.83L0 64.67V32.33L28 16.17' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 90% 80% at 30% 40%, #000 30%, transparent 80%);
+  mask-composite: intersect;
+  -webkit-mask-size: 56px 97px, 100% 100%;
+  mask-size: 56px 97px, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  mask-repeat: repeat, no-repeat;
 }
 
 .login-brand {
@@ -2050,16 +2051,6 @@ body {
   bottom: -25vmax;
   background: radial-gradient(closest-side, var(--signal-soft), transparent 70%);
   pointer-events: none;
-}
-
-.hero-grid {
-  animation: gridDrift 24s linear infinite;
-}
-
-@keyframes gridDrift {
-  to {
-    background-position: 43px 43px;
-  }
 }
 
 .hero-scan {
