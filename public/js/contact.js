@@ -10,7 +10,21 @@
   var scriptLoading = false;
   var sending = false;
 
-  function closeModal() { modal.hidden = true; captchaErr.textContent = ''; }
+  var loader = document.createElement('div');
+  loader.className = 'loader-row';
+  loader.setAttribute('role', 'status');
+  loader.hidden = true;
+  loader.innerHTML = '<span class="spinner"></span><span class="loader-text"></span>';
+  captchaEl.parentNode.insertBefore(loader, captchaEl);
+  var submitBtn = form.querySelector('button[type="submit"]');
+
+  function showLoader(text) {
+    loader.querySelector('.loader-text').textContent = text;
+    loader.hidden = false;
+  }
+  function hideLoader() { loader.hidden = true; }
+
+  function closeModal() { modal.hidden = true; captchaErr.textContent = ''; hideLoader(); captchaEl.hidden = false; }
 
   function resetCaptcha() {
     if (window.grecaptcha && widgetId !== null) window.grecaptcha.reset(widgetId);
@@ -19,6 +33,10 @@
   function send(token) {
     if (sending) return;
     sending = true;
+    captchaEl.hidden = true;
+    captchaErr.textContent = '';
+    showLoader('Sending message...');
+    if (submitBtn) submitBtn.classList.add('loading');
     var f = form.elements;
     fetch('/contact', {
       method: 'POST',
@@ -47,16 +65,22 @@
         captchaErr.textContent = err.message;
         resetCaptcha();
       })
-      .then(function () { sending = false; });
+      .then(function () {
+        sending = false;
+        hideLoader();
+        captchaEl.hidden = false;
+        if (submitBtn) submitBtn.classList.remove('loading');
+      });
   }
 
   function renderWidget() {
-    if (widgetId !== null) { window.grecaptcha.reset(widgetId); return; }
+    if (widgetId !== null) { window.grecaptcha.reset(widgetId); hideLoader(); return; }
     widgetId = window.grecaptcha.render(captchaEl, {
       sitekey: captchaEl.getAttribute('data-sitekey'),
       theme: 'dark',
       callback: send,
     });
+    hideLoader();
   }
 
   window.onContactRecaptchaLoad = function () { window.grecaptcha.ready(renderWidget); };
@@ -69,10 +93,11 @@
     if (window.grecaptcha && window.grecaptcha.render) return renderWidget();
     if (scriptLoading) return;
     scriptLoading = true;
+    showLoader('Loading captcha...');
     var s = document.createElement('script');
     s.src = 'https://www.google.com/recaptcha/api.js?onload=onContactRecaptchaLoad&render=explicit';
     s.async = true;
-    s.onerror = function () { scriptLoading = false; captchaErr.textContent = 'Captcha failed to load.'; };
+    s.onerror = function () { scriptLoading = false; hideLoader(); captchaErr.textContent = 'Captcha failed to load.'; };
     document.head.appendChild(s);
   }
 

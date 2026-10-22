@@ -8,8 +8,17 @@
   var token = '';
   var widgetId = null;
   var scriptLoading = false;
+  var submitBtn = form.querySelector('button[type="submit"]');
+  var loader = document.createElement('div');
+  loader.className = 'loader-row';
+  loader.setAttribute('role', 'status');
+  loader.hidden = true;
+  loader.innerHTML = '<span class="spinner"></span><span>Loading captcha...</span>';
+  captchaEl.parentNode.insertBefore(loader, captchaEl);
+  var downloading = false;
 
   function renderWidget() {
+    loader.hidden = true;
     if (widgetId !== null) { window.grecaptcha.reset(widgetId); token = ''; return; }
     widgetId = window.grecaptcha.render(captchaEl, {
       sitekey: captchaEl.getAttribute('data-sitekey'),
@@ -30,10 +39,11 @@
     if (window.grecaptcha && window.grecaptcha.render) return renderWidget();
     if (scriptLoading) return;
     scriptLoading = true;
+    loader.hidden = false;
     var s = document.createElement('script');
     s.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
     s.async = true;
-    s.onerror = function () { scriptLoading = false; errorEl.textContent = 'Captcha failed to load.'; };
+    s.onerror = function () { scriptLoading = false; loader.hidden = true; errorEl.textContent = 'Captcha failed to load.'; };
     document.head.appendChild(s);
   }
 
@@ -52,6 +62,10 @@
     e.preventDefault();
     errorEl.textContent = '';
     if (!token) { errorEl.textContent = 'Please complete the captcha.'; return; }
+    if (downloading) return;
+    downloading = true;
+    submitBtn.classList.add('loading');
+    submitBtn.textContent = 'Downloading...';
     fetch('/cv/download', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -78,6 +92,11 @@
       .catch(function (err) {
         errorEl.textContent = err.message;
         if (window.grecaptcha && widgetId !== null) { window.grecaptcha.reset(widgetId); token = ''; }
+      })
+      .then(function () {
+        downloading = false;
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Download';
       });
   });
 })();
