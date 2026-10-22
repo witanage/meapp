@@ -7,6 +7,7 @@ const profileController = require('../controllers/profileController');
 const settingsController = require('../controllers/settingsController');
 const adminController = require('../controllers/adminController');
 const cvController = require('../controllers/cvController');
+const activityController = require('../controllers/activityController');
 const { requireAuth } = require('../middleware/auth');
 const { verifyCsrf } = require('../middleware/csrf');
 
@@ -25,6 +26,7 @@ router.get('/cv', cvController.form);
 router.post('/cv', cvController.parseUpload, verifyCsrf, cvController.upload);
 router.post('/cv/delete', verifyCsrf, cvController.remove);
 router.post('/cv/toggle', verifyCsrf, cvController.toggle);
+router.get('/queue', activityController.queue);
 
 router.get('/password', settingsController.editForm);
 router.post('/password', verifyCsrf, settingsController.update);

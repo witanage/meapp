@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head') %>
+<body>
+  <div class="admin-shell">
+    <%- include('partials/sidebar') %>
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1><%= pageTitle %></h1>
+      </div>
+
+      <h2>Pending notifications</h2>
+      <% if (queue.length) { %>
+        <table class="admin-table">
+          <thead><tr><th>#</th><th>From</th><th>Subject</th><th>Attempts</th><th>Queued</th></tr></thead>
+          <tbody>
+            <% queue.forEach(function (q) { %>
+              <tr>
+                <td><%= q.id %></td>
+                <td><%= q.name %> &lt;<%= q.email %>&gt;</td>
+                <td><%= q.subject %></td>
+                <td><%= q.attempts %></td>
+                <td><%= new Date(q.created_at).toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>Queue is empty. All notifications were delivered.</p>
+      <% } %>
+
+      <h2 style="margin-top:32px;">Recent messages</h2>
+      <% if (messages.length) { %>
+        <table class="admin-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>IP</th><th>Date</th></tr></thead>
+          <tbody>
+            <% messages.forEach(function (m) { %>
+              <tr>
+                <td><%= m.name %></td>
+                <td><%= m.email %></td>
+                <td><%= m.subject %></td>
+                <td><%= m.message %></td>
+                <td><%= m.ip %></td>
+                <td><%= new Date(m.created_at).toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No messages yet.</p>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>
